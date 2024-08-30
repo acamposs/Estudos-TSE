@@ -1,0 +1,121 @@
+/* body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--md-default-bg-color);
+    color: var(--md-default-fg-color);
+}
+
+.md-nav__link,
+.md-footer {
+    color: #808080;
+}
+
+.md-typeset h1,
+.md-typeset h2,
+.md-typeset h3 {
+    color: #808080;
+}
+
+.md-typeset a {
+    color: #808080;
+}
+
+.md-typeset a:hover {
+    text-decoration: underline;
+}
+
+.fa-file-alt {
+    color: var(--md-primary-fg-color);
+    background-color: #808080;
+} */
+/* Customizações para o modo claro */
+@media (prefers-color-scheme: light) {
+    body {
+        font-family: 'Roboto', sans-serif;
+        background-color: #ffffff;
+        color: #000000;
+
+    }
+
+    .md-nav__link,
+    .md-footer {
+        color: #000000;
+    }
+
+    .md-typeset h1,
+    .md-typeset h2,
+    .md-typeset h3 {
+        color: #808080;
+    }
+
+    .md-typeset a {
+        color: #808080;
+    }
+
+    .md-typeset a:hover {
+        text-decoration: underline;
+        color: #808080;
+
+    }
+
+    .fa-file-alt {
+        color: #808080;
+        background-color: #ffffff;
+    }
+
+    .md-footer {
+        background-color: grey;
+    }
+}
+
+/* Customizações para o modo escuro */
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #121212;
+        color: #e0e0e0;
+    }
+
+    .md-footer {
+        background-color: grey;
+    }
+
+    .md-nav__link,
+    .md-footer {
+        color: #e0e0e0;
+    }
+
+    .md-typeset h1,
+    .md-typeset h2,
+    .md-typeset h3 {
+        color: #e0e0e0;
+    }
+
+    .md-typeset a {
+        color: #bb86fc;
+    }
+
+    .md-typeset a:hover {
+        text-decoration: underline;
+        color: #bb86fc;
+    }
+
+    .fa-file-alt {
+        color: #bb86fc;
+        background-color: #121212;
+    }
+
+    .md-footer {
+        background-color: grey;
+    }
+}
+
+ul {
+    list-style-type: none;
+    /* Remove os pontos das listas não ordenadas */
+    padding-left: 0;
+    /* Remove o recuo padrão da lista */
+}
+
+ul li {
+    margin-left: 0;
+    /* Garante que os itens da lista fiquem alinhados à esquerda */
+}
