@@ -1,82 +1,136 @@
-# Cronômetro de Estudo
+# Gerenciador de Estudos
 
-<div id="timer">00:00:00</div>
-<a href="#" onclick="startTimer()" class="md-button md-button--primary">Iniciar</a>
-<a href="#" onclick="pauseTimer()" class="md-button md-button--secondary">Pausar</a>
-<a href="#" onclick="resetTimer()" class="md-button md-button--danger">Resetar</a>
+## Progresso das Matérias
 
+| Matéria                 | Horas Estudadas | Meta de Horas |
+|-------------------------|-----------------|---------------|
+| Português               | <span id="horas-portugues">0</span> | 30 |
+| Inglês                  | <span id="horas-ingles">0</span> | 20 |
+| Direito Administrativo  | <span id="horas-direito">0</span> | 25 |
+| Programação de Sistemas | <span id="horas-programacao">0</span> | 40 |
+| Banco de Dados          | <span id="horas-banco">0</span> | 30 |
+
+
+## Insira os Dados
+
+<form id="studyForm">
+    <label for="subject">Matéria:</label>
+    <select id="subject" name="subject" required>
+        <option value="Português">Português</option>
+        <option value="Inglês">Inglês</option>
+        <option value="Direito Administrativo">Direito Administrativo</option>
+        <option value="Programação de Sistemas">Programação de Sistemas</option>
+        <option value="Banco de Dados">Banco de Dados</option>
+    </select>
+    
+    <label for="hours">Horas Estudadas:</label>
+    <input type="number" id="hours" name="hours" required>
+    
+    <button type="submit">Adicionar ao Gráfico</button>
+</form>
+
+## Semana Atual: <span id="currentWeek"></span>
+
+<canvas id="studyChart" width="400" height="200"></canvas>
+
+## Horas Trabalhadas da Semana
+<table id="studyTable">
+    <thead>
+        <tr>
+            <th>Matéria</th>
+            <th>Horas Estudadas</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Dados inseridos dinamicamente -->
+    </tbody>
+</table>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    let timer;
-    let seconds = 0;
-    let isRunning = false;
-
-    function startTimer() {
-        if (!isRunning) {
-            isRunning = true;
-            timer = setInterval(updateTime, 1000); 
+// Inicializa o gráfico
+var ctx = document.getElementById('studyChart').getContext('2d');
+var studyChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: ['Português', 'Inglês', 'Direito Administrativo', 'Programação de Sistemas', 'Banco de Dados'],
+        datasets: [{
+            label: 'Horas Estudadas',
+            data: [0, 0, 0, 0, 0],
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 1
+        },
+        {
+            label: 'Meta de Horas',
+            data: [30, 20, 25, 40, 30],
+            backgroundColor: 'rgba(153, 102, 255, 0.2)',
+            borderColor: 'rgba(153, 102, 255, 1)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
         }
     }
+});
 
-    function pauseTimer() {
-        if (isRunning) {
-            clearInterval(timer);
-            isRunning = false;
-        }
+// Função para resetar os dados do gráfico toda segunda-feira
+function resetChartOnMonday() {
+    var today = new Date();
+    var dayOfWeek = today.getDay(); // 0 = Domingo, 1 = Segunda, etc.
+    
+    if (dayOfWeek === 1) { // Segunda-feira
+        studyChart.data.datasets[0].data = [0, 0, 0, 0, 0]; // Resetar horas estudadas
+        studyChart.update();
+        
+        // Limpar a tabela de horas da semana
+        document.getElementById('studyTable').getElementsByTagName('tbody')[0].innerHTML = '';
     }
+}
 
-    function resetTimer() {
-        clearInterval(timer);
-        isRunning = false;
-        seconds = 0;
-        updateDisplay();
-    }
+// Verifica se hoje é segunda-feira e reseta o gráfico se necessário
+resetChartOnMonday();
 
-    function updateTime() {
-        seconds++;
-        updateDisplay();
-    }
+// Atualiza a tabela de horas estudadas e o gráfico
+document.getElementById('studyForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    var subject = document.getElementById('subject').value;
+    var hours = parseInt(document.getElementById('hours').value);
+    
+    // Atualiza as horas estudadas no gráfico
+    var subjectIndex = studyChart.data.labels.indexOf(subject);
+    studyChart.data.datasets[0].data[subjectIndex] += hours;
+    studyChart.update();
+    
+    // Atualiza a tabela de progresso das matérias
+    document.getElementById('horas-' + subject.toLowerCase().replace(' ', '-')).innerText = studyChart.data.datasets[0].data[subjectIndex];
+    
+    // Atualiza a tabela de horas da semana
+    var tableBody = document.getElementById('studyTable').getElementsByTagName('tbody')[0];
+    var newRow = tableBody.insertRow();
+    var cell1 = newRow.insertCell(0);
+    var cell2 = newRow.insertCell(1);
+    cell1.innerHTML = subject;
+    cell2.innerHTML = hours;
+    
+    // Limpa o formulário
+    document.getElementById('studyForm').reset();
+});
 
-    function updateDisplay() {
-        let hours = Math.floor(seconds / 3600);
-        let minutes = Math.floor((seconds % 3600) / 60);
-        let secs = seconds % 60;
-        document.getElementById('timer').textContent = 
-            `${pad(hours)}:${pad(minutes)}:${pad(secs)}`;
-    }
+// Função para calcular a semana atual e exibi-la
+function getCurrentWeek() {
+    var today = new Date();
+    var firstDayOfYear = new Date(today.getFullYear(), 0, 1);
+    var pastDaysOfYear = (today - firstDayOfYear) / 86400000;
+    var weekNumber = Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
+    return weekNumber;
+}
 
-    function pad(value) {
-        return value.toString().padStart(2, '0');
-    }
+// Exibe a semana atual
+document.getElementById('currentWeek').innerText = "Semana " + getCurrentWeek();
 </script>
-
-<style>
-    #timer {
-        font-size: 2em;
-        font-weight: bold;
-        margin-bottom: 10px;
-        text-align: center;
-    }
-    .md-button {
-        font-size: 1em;
-        margin: 5px;
-        padding: 10px 20px;
-        text-decoration: none;
-        display: inline-block;
-        border-radius: 4px;
-        color: #fff;
-        text-align: center;
-    }
-    .md-button--primary {
-        background-color: #green;
-
-    }
-    .md-button--secondary {
-        background-color: #grey;
-    }
-    .md-button--danger {
-        background-color: red;
-    }
-    .md-button:hover {
-        opacity: 0.9;
-    }
-</style>
