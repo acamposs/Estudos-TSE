@@ -1,5 +1,7 @@
 site_name: 'TSE - Técnico Judiciário - Programação de Sistemas'
 site_description: 'Documentação de Estudos para TSE - Técnico Judiciário - Programação de Sistemas'
+site_url: https://acamposs.github.io/Estudos-TSE/
+repo_url:
 theme:
   name: 'material'
   palette:
@@ -45,3 +47,6 @@ markdown_extensions:
       clickable_checkbox: true  
   - def_list
   - attr_list
+plugins:
+  - search
+  - git-revision-date-localized
